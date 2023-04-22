@@ -13,6 +13,7 @@ Distributes NxN square grid nodes between processors.
 Программа должна эффективно разделить узлы между процессорами. 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -> Task:
 Implement a program that partitions an NxN square matrix of computational nodes among P processors so that the computational loads are approximately equal.
