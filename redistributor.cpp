@@ -2,22 +2,35 @@
 #include <cstdlib>
 #include <stddef.h>
 #include <math.h>
-//#include <algorithm>
 #include </usr/local/include/metis.h>
+#include <fstream>
+
 
 using namespace std;
 
 
     // Входные данные
     idx_t N = 5; // Число процессоров
-    const idx_t m = 10; // Количество строк матрицы 
-    const idx_t n = m; // Количество столбцов матрицы
+    idx_t m = 7; // Количество строк матрицы 
+    idx_t n = m; // Количество столбцов матрицы
     idx_t nnodes = n * m; // Общее количество узлов
-    idx_t ncon = 1; // Количество весов (номер процессора и трудоемкость)
+    idx_t ncon = 1; // Количество весов (трудоемкость)
     
     idx_t Radius = 4; // Радиус круга, задаваемый количеством узлов (шт).
-    idx_t Speed = 2; //1,4 Количество узлов, проходимых центром крга по диагонали за секунду (шт/сек).
+    idx_t Speed = 1; //1,4 Количество узлов, проходимых центром круга по диагонали за секунду (шт/сек).
     idx_t Time = 2; // Время, которое двигался круг по диагонали (сек).
+
+    // Функция, связывающая файл redistributor.cpp и MAIN.cpp
+    void getMAINvalues(idx_t N1, idx_t m1, idx_t n1, idx_t nnodes1, idx_t ncon1, idx_t Radius1, idx_t Speed1, idx_t Time1){
+        N=N1;
+        m = m1;
+        n = n1;
+        nnodes = nnodes1;
+        ncon = ncon1;
+        Radius = Radius1;
+        Speed = Speed1;
+        Time = Time1;
+    }
 
 
     // Функция возвращает матрицу трудоемкостей, где внутри круга трудоемкость x10, а вне круга x1.
@@ -56,45 +69,53 @@ using namespace std;
     }
 
 
-// Функция выводит массив, содержащий список всех соседних вершин для каждой вершины графа.
-void printAdjncy(idx_t* adjncy, idx_t* xadj){
-    idx_t i2=0;
-    idx_t max = xadj[n*m-1]+n;
+    // Функция выводит массив, содержащий список всех соседних вершин для каждой вершины графа.
+    void printAdjncy(idx_t* adjncy, idx_t* xadj){
+        idx_t i2=0;
+        idx_t max = xadj[n*m-1]+n;
 
-    //Форматированный вывод.
-    for (idx_t i=0; i < n*m; i++){
-        cout << "xadj["<< i <<"]:" << xadj[i]<< "   ";
-        if (i==n*m-1){
-            for (idx_t j=xadj[i]; j<xadj[i]+2; j++){
+        //Форматированный вывод.
+        for (idx_t i=0; i < n*m; i++){
+            cout << "xadj["<< i <<"]:" << xadj[i]<< "   ";
+            if (i==n*m-1){
+                for (idx_t j=xadj[i]; j<xadj[i]+2; j++){
+                    cout << adjncy[j]<<" ";
+                }
+                cout << endl;
+                break;
+            }
+            for (idx_t j=xadj[i]; j<xadj[i+1]; j++){
                 cout << adjncy[j]<<" ";
             }
             cout << endl;
-            break;
-        }
-        for (idx_t j=xadj[i]; j<xadj[i+1]; j++){
-            cout << adjncy[j]<<" ";
         }
         cout << endl;
+
+        // Вывод xadj.
+        cout << "xadj[]= {";
+        for (idx_t i = 0; i<n*m;i++){
+            cout<< xadj[i]<<", ";
+        }
+        cout<< xadj[n*m] << "}"<<endl;
+
+        // Вывод adjncy.
+        cout << "adjncy[]= {";
+        for (idx_t i = 0; i<xadj[n*m-1]+1;i++){
+            cout<< adjncy[i]<<", ";
+        }
+        cout<< adjncy[xadj[n*m-1]+1] << "}"<<endl;
     }
-    cout << endl;
 
-    // Вывод xadj.
-    cout << "xadj[]= {";
-    for (idx_t i = 0; i<n*m;i++){
-        cout<< xadj[i]<<", ";
+
+int main(int argc, char* argv[]) {
+
+    //Получение данных из файла MAIN.cpp
+    if (argc>1){
+        getMAINvalues(stoi(argv[1]),stoi(argv[2]), stoi(argv[3]),
+                      stoi(argv[4]),stoi(argv[5]),stoi(argv[6]),
+                      stoi(argv[7]),stoi(argv[8]));
     }
-    cout<< xadj[n*m] << "}"<<endl;
-
-    // Вывод adjncy.
-    cout << "adjncy[]= {";
-    for (idx_t i = 0; i<xadj[n*m-1]+1;i++){
-        cout<< adjncy[i]<<", ";
-    }
-    cout<< adjncy[xadj[n*m-1]+1] << "}"<<endl;
-}
-
-
-int main() {
+    
 
         // Создание и заполнение матрицы узлов T
     idx_t* xadj = new idx_t[nnodes + 1];   //массив, содержащий индексы начала каждой строки в массиве adjncy.
@@ -249,14 +270,14 @@ int main() {
 
 
     // Вывод маски
-    // for (idx_t i = 0; i < m; i++){
-    //     for(idx_t j = 0; j < n; j++){
-    //         cout.width(3);
-    //         cout << circle[i*n + j] <<" ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
+    for (idx_t i = 0; i < m; i++){
+        for(idx_t j = 0; j < n; j++){
+            cout.width(3);
+            cout << circle[i*n + j] <<" ";
+        }
+        cout << endl;
+    }
+    cout << endl;
 
 
 
@@ -288,42 +309,90 @@ int main() {
 
         // Вызов функции METIS_PartGraphKway() для разбиения графа на части
     idx_t objval; // указатель на переменную, в которую будет записано значение целевой функции, определяющей качество разбиения
-    //METIS_PartGraphRecursive(&nnodes, &ncon, xadj, adjncy, vwgt, adjwgt, NULL, &N, NULL, NULL, options, &objval, part);
-    METIS_PartGraphKway(&nnodes, &ncon, xadj, adjncy, vwgt, adjwgt, NULL, &N, NULL, NULL, options, &objval, part);
+    METIS_PartGraphRecursive(&nnodes, &ncon, xadj, adjncy, vwgt, adjwgt, NULL, &N, NULL, NULL, options, &objval, part);
+    //METIS_PartGraphKway(&nnodes, &ncon, xadj, adjncy, vwgt, adjwgt, NULL, &N, NULL, NULL, options, &objval, part);
 
 
     //return 0;
     cout<< endl;
-    idx_t T[n][m] = {};
+    idx_t* T = new idx_t(n*m) ;
+    //idx_t T[n][m] = {} ;
 
 
-    // for (idx_t i= 0;i<n*m;i++){
-    //     cout << part[i]<< " ";
-    // }
 
-
-        // Изменение значения элемента в матрице T
+    // Изменение значения элемента в матрице T
     for (idx_t i = 0; i < m; ++i) { // строки
         for (idx_t j = 0; j < n; ++j) { // столбцы
-            idx_t partId = part[i*m + j]; // Номер процессора, на который была разбита текущая вершина
-            T[i][j] = partId + 1; // Изменение значения элемента в матрице T в соответствии с разбиением
+            idx_t partId = part[i*n + j]; // Номер процессора, на который была разбита текущая вершина
+            //T[i][j] = partId + 1; // Изменение значения элемента в матрице T в соответствии с разбиением
+            T[i*n + j] = partId + 1; // Изменение значения элемента в матрице T в соответствии с разбиением
+        
         }
     }
 
 
     // Вывод полученной матрицы T
+    cout << "[";
     for (idx_t i = 0; i < m; ++i) {
+        cout << "[";
         for (idx_t j = 0; j < n; ++j) {
-            cout << T[i][j]<< " ";
+            cout.width(2);
+            //cout << T[i][j];
+            cout << T[i*n + j];
+            if (j != n - 1) {
+                cout << ", ";
+            }
         }
-        cout << endl;
+        cout << "]";
+        if (i != m - 1) {
+            cout << ", "<<endl;
+        }
     }
+    cout << "]" << endl;
+
+
+
+    // Вывод маски Circle в файл matrix.csv
+    ofstream outfile;
+    outfile.open("matrixCircle.csv");
+    for (int i = 0; i < m; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            //outfile << T[i][j] << " ";
+            outfile << circle[i*n+j] << " ";
+        }
+        outfile << endl;
+    }
+    // Закрытие файла
+    outfile.close();
+
+
+
+
+    // Вывод матрицы T в файл matrix.csv
+    outfile.open("matrix.csv");
+    for (int i = 0; i < m; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            //outfile << T[i][j] << " ";
+            outfile << T[i*n+j] << " ";
+        }
+        outfile << endl;
+    }
+    // Закрытие файла
+    outfile.close();
+
+
+
 
     // Очистка памяти
     free(xadj);
     free(adjncy);
     free(vwgt);
     free(part);
+    free(T);
 
     return 0;
 }
