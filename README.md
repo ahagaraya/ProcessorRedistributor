@@ -12,6 +12,10 @@ Distributes NxN square grid nodes between processors.
 
 Программа должна эффективно разделить узлы между процессорами. 
 
+Для тестирования введите в терминал:
+$  g++ MAIN.cpp
+$  ./a.out
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -22,5 +26,9 @@ Implement a program that partitions an NxN square matrix of computational nodes 
 Initially, the computational load of each node is 1. A circle starts moving from the bottom-left node of the matrix, with a radius of R and a computational load of x10 inside the circle.
 
 The program should efficiently distribute the nodes among processors.
+
+To test, enter into the terminal:
+$  g++ MAIN.cpp
+$  ./a.out
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
