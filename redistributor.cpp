@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
     }
     
 
-        // Создание и заполнение матрицы узлов T
+    // Выделение памяти
     idx_t* xadj = new idx_t[nnodes + 1];   //массив, содержащий индексы начала каждой строки в массиве adjncy.
     idx_t* adjncy = new idx_t[8 + (n-2)*3*2 + (m-2)*3*2 + (n-2)*(m-2)*4];  //массив, содержащий список всех соседних вершин для каждой вершины графа.
     idx_t* vwgt = new idx_t[nnodes * ncon];   //массив, содержащий веса для каждой вершины.
@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
     idx_t* part = new idx_t[nnodes];   //массив, в который будут записаны номера партиций, в которые будут помещены вершины.
 
 
-        // Заполнение xadj и adjncy
+    // Заполнение xadj и adjncy
     idx_t strnumInd = 0; // Инкрементируется при заполнении xadj.
     idx_t adjncyInd = 0; // Инкрементируется при заполнении adjncy.
     idx_t strnum = 0; // Счетчик элементов, показывающий на каком элементе начинается строка в adjncy.
@@ -307,11 +307,10 @@ int main(int argc, char* argv[]) {
     // }
 
 
-        // Вызов функции METIS_PartGraphKway() для разбиения графа на части
+    // Вызов функции METIS_PartGraphKway() для разбиения графа на части
     idx_t objval; // указатель на переменную, в которую будет записано значение целевой функции, определяющей качество разбиения
     METIS_PartGraphRecursive(&nnodes, &ncon, xadj, adjncy, vwgt, adjwgt, NULL, &N, NULL, NULL, options, &objval, part);
     //METIS_PartGraphKway(&nnodes, &ncon, xadj, adjncy, vwgt, adjwgt, NULL, &N, NULL, NULL, options, &objval, part);
-
 
     //return 0;
     cout<< endl;
@@ -352,7 +351,7 @@ int main(int argc, char* argv[]) {
 
 
 
-    // Вывод маски Circle в файл matrix.csv
+    // Вывод маски Circle в файл matrixCircle.csv
     ofstream outfile;
     outfile.open("matrixCircle.csv");
     for (int i = 0; i < m; i++)
@@ -388,11 +387,17 @@ int main(int argc, char* argv[]) {
 
 
     // Очистка памяти
-    free(xadj);
-    free(adjncy);
-    free(vwgt);
-    free(part);
-    free(T);
+    delete[] xadj;
+    delete[] adjncy;
+    delete[] vwgt;
+    delete[] part;
+    delete T;
+
+    // free(xadj);
+    // free(adjncy);
+    // free(vwgt);
+    // free(part);
+    // free(T);
 
     return 0;
 }
